@@ -27,6 +27,7 @@ task("accounts", "Prints the list of accounts", async (taskArgs, hre) => {
 const {
   TESTNET_PRIVATE_KEY: testnetPrivateKey,
   MAINNET_PRIVATE_KEY: mainnetPrivateKey,
+  SEPOLIA_RPC_URL: sepoliaRpcUrl,
 } = process.env;
 const reportGas = process.env.REPORT_GAS;
 
@@ -39,7 +40,7 @@ const reportGas = process.env.REPORT_GAS;
 module.exports = {
   networks: {
     "sepolia": {
-      url: "https://eth-sepolia.public.blastapi.io",
+      url: sepoliaRpcUrl,
       chainId: 11155111,
       accounts: [testnetPrivateKey],
       timeout: 40000,
