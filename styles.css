@@ -105,3 +105,7 @@ button.danger {
   font-size: 14px;
   color: #666;
 }
+
+.tx-link {
+  text-decoration: none;
+}

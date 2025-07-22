@@ -34,29 +34,76 @@ Một DApp NFT whitelist mint đơn giản được xây dựng bằng Solidity 
 
 ---
 
+## 💻 How to Run the Hardhat Project
+
+### 🔧 1. Install Dependencies
+
+```bash
+cd dApp
+npm install
+````
+
+### 🔐 2. Environment Configuration
+
+Tạo file `.env` trong thư mục `dApp/` với nội dung sau:
+
+```env
+TESTNET_PRIVATE_KEY=your_wallet_private_key
+SEPOLIA_RPC_URL=https://sepolia.infura.io/v3/YOUR_INFURA_PROJECT_ID
+```
+
+> ⚠️ **Important**: Tuyệt đối **không chia sẻ private key công khai**.
+
+### ⚙️ 3. Compile Contracts
+
+```bash
+npx hardhat compile
+```
+
+### 🚀 4. Deploy to Sepolia
+
+```bash
+npx hardhat run deploy --network sepolia
+```
+
+### ✅ 5. Verify on Etherscan
+
+```bash
+npx hardhat verify --network sepolia <your_contract_address>
+```
+
+### 🌐 6. Run the Frontend
+
+Mở file `index.html` bằng **Live Server** (trong VS Code hoặc extension tương tự). Truy cập tại:
+
+```
+http://127.0.0.1:5500/index.html
+```
+
+---
+
 ## 🖼️ Giao diện người dùng
-
-Trang web được xây dựng đơn giản với:
-- Kết nối ví
-- Form mint NFT
-- Danh sách NFT đã mint
-- Giao diện quản trị (thêm whitelist, rút tiền, thay đổi thông số)
-
-👉 **Hình ảnh minh họa**:  
 
 ![UI Screenshot](./image/image1.png)
 ![UI Screenshot](./image/image2.png)
 
 ---
 
-## 📂 Metadata
-
-Metadata cho mỗi NFT được lưu ở dạng JSON tại MockAPI (có thể thay bằng NFT.Storage hoặc IPFS thật). Ví dụ:
+## 🧾 Metadata JSON
 
 ```json
 {
-  "name": "NFT 1",
+  "name": "NFT",
   "description": "This is a whitelist-only NFT.",
   "image": "https://picsum.photos/id/1/300/300",
-  "id": "1"
+  "id" : "1",
 }
+```
+
+👉 Hợp đồng sẽ tạo `tokenURI = baseURI + tokenId`. Metadata cần tuân chuẩn ERC721.
+
+---
+
+## 🌟 Product Demo
+
+🌐 Website: [https://tcrow06.github.io/capstone-project/](https://tcrow06.github.io/capstone-project/)

@@ -139,6 +139,11 @@ document.getElementById("loadMintedBtn").onclick = async () => {
           <h4>#${tokenId} - ${meta.name}</h4>
           <p class="nft-desc">${meta.description}</p>
           <small><strong>Owner:</strong> ${shortOwner}</small>
+          <p>
+              <a href="https://sepolia.etherscan.io/token/${contractAddress}?a=${ids[i]}" 
+                target="_blank" 
+                class="tx-link">View on Etherscan</a>
+          </p>
         </div>
       `;
 
