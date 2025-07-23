@@ -1,5 +1,5 @@
-const contractAddress = "0x795211A8524EBF75230c26C1Fb337AAd06c4CF3F"
-const contractABI =  [
+const contractAddress = "0x72057eB7C754c8bdF166aA626cc504CF8C81d809"
+const contractABI = [
     {
       "inputs": [
         {
@@ -192,7 +192,7 @@ const contractABI =  [
         {
           "indexed": false,
           "internalType": "uint256",
-          "name": "_MAX_PER_WALLET",
+          "name": "_max",
           "type": "uint256"
         }
       ],

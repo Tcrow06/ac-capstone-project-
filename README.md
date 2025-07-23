@@ -6,7 +6,7 @@ Một DApp NFT whitelist mint đơn giản được xây dựng bằng Solidity 
 
 ## 🔗 Contract Verified on Sepolia
 
-✅ [0x795211A8524EBF75230c26C1Fb337AAd06c4CF3F](https://sepolia.etherscan.io/address/0x795211A8524EBF75230c26C1Fb337AAd06c4CF3F#code)
+✅ [0x72057eB7C754c8bdF166aA626cc504CF8C81d809](https://sepolia.etherscan.io/address/0x72057eB7C754c8bdF166aA626cc504CF8C81d809#code)
 
 ---
 
@@ -40,7 +40,7 @@ Một DApp NFT whitelist mint đơn giản được xây dựng bằng Solidity 
 
 ```bash
 cd dApp
-npm install
+yarn install
 ````
 
 ### 🔐 2. Environment Configuration
@@ -77,11 +77,12 @@ npx hardhat verify --network sepolia <your_contract_address>
 Mở file `index.html` bằng **Live Server** (trong VS Code hoặc extension tương tự). Truy cập tại:
 
 ```
-http://127.0.0.1:5500/index.html
+http://127.0.0.1:5500/fe/index.html
 ```
 
 ### 7.Run the Server
 
+Khởi chạy server dùng cho chức năng cật nhật lại MerkleTree
 
 ```bash
 cd server

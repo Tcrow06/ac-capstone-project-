@@ -1,4 +1,3 @@
-
 let provider, signer, contract;
 
 const walletDisplay = document.getElementById("walletAddress");
@@ -33,9 +32,10 @@ document.getElementById("mintBtn").onclick = async () => {
   const amount = parseInt(document.getElementById("mintAmount").value);
   if (!amount) return;
   const userAddress = await signer.getAddress();
+
   try {
-    // const res = await fetch(`http://localhost:3000/api/proof/${userAddress}`);
-    const res = await fetch(`https://server-nft-myci.vercel.app/api/proof/${userAddress}`);
+    const res = await fetch(`http://localhost:3000/api/proof/${userAddress}`);
+    // const res = await fetch(`https://server-nft-myci.vercel.app/api/proof/${userAddress}`);
     const data = await res.json();
     const leafProof = data.proof;
     if (!leafProof) {
@@ -44,7 +44,7 @@ document.getElementById("mintBtn").onclick = async () => {
     }
     const price = await contract.price();
     const totalCost = price.mul(amount);
-
+    console.log("Calling mint with", amount, leafProof, price.toString());
     const tx = await contract.mint(amount, leafProof, { value: totalCost });
     await tx.wait();
     showToast(`✅ Minted ${amount} NFTs`);
@@ -53,9 +53,15 @@ document.getElementById("mintBtn").onclick = async () => {
   }
 };
 
-document.getElementById("addWhitelistBtn").onclick = async (e) => {
-  e.preventDefault();
+document.getElementById("addWhitelistBtn").onclick = async () => {
   const address = document.getElementById("whitelistAddress").value;
+
+  const currentAddress = await signer.getAddress();
+  const ownerAddress = await contract.owner();
+  if (currentAddress.toLowerCase() !== ownerAddress.toLowerCase()) {
+      showToast("❌ You are not the contract owner", false);
+      return;
+    }
   try {
     const res = await fetch('http://localhost:3000/api/whitelist/add', {
       method: 'POST',
@@ -73,6 +79,13 @@ document.getElementById("addWhitelistBtn").onclick = async (e) => {
   }
 };
 document.getElementById("removeWhitelistBtn").onclick = async () => {
+
+  const currentAddress = await signer.getAddress();
+  const ownerAddress = await contract.owner();
+  if (currentAddress.toLowerCase() !== ownerAddress.toLowerCase()) {
+      showToast("❌ You are not the contract owner", false);
+      return;
+    }
   const address = document.getElementById("whitelistAddress").value;
   try {
     const res = await fetch('http://localhost:3000/api/whitelist/remove', {
