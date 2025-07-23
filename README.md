@@ -6,7 +6,7 @@ Một DApp NFT whitelist mint đơn giản được xây dựng bằng Solidity 
 
 ## 🔗 Contract Verified on Sepolia
 
-✅ [0x67426256B28c89349ab25e886876Fe5A24c21976](https://sepolia.etherscan.io/address/0x67426256B28c89349ab25e886876Fe5A24c21976#code)
+✅ [0x795211A8524EBF75230c26C1Fb337AAd06c4CF3F](https://sepolia.etherscan.io/address/0x795211A8524EBF75230c26C1Fb337AAd06c4CF3F#code)
 
 ---
 
@@ -80,6 +80,14 @@ Mở file `index.html` bằng **Live Server** (trong VS Code hoặc extension t�
 http://127.0.0.1:5500/index.html
 ```
 
+### 7.Run the Server
+
+
+```bash
+cd server
+npx ts-node server.ts
+````
+
 ---
 
 ## 🖼️ Giao diện người dùng
@@ -103,7 +111,3 @@ http://127.0.0.1:5500/index.html
 👉 Hợp đồng sẽ tạo `tokenURI = baseURI + tokenId`. Metadata cần tuân chuẩn ERC721.
 
 ---
-
-## 🌟 Product Demo
-
-🌐 Website: [https://tcrow06.github.io/capstone-project/](https://tcrow06.github.io/capstone-project/)

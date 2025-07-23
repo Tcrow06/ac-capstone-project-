@@ -1,6 +1,12 @@
 [
     {
-        "inputs": [],
+        "inputs": [
+            {
+                "internalType": "bytes32",
+                "name": "_merkleRoot",
+                "type": "bytes32"
+            }
+        ],
         "stateMutability": "nonpayable",
         "type": "constructor"
     },
@@ -135,19 +141,6 @@
             {
                 "indexed": true,
                 "internalType": "address",
-                "name": "user",
-                "type": "address"
-            }
-        ],
-        "name": "AddedToWhitelist",
-        "type": "event"
-    },
-    {
-        "anonymous": false,
-        "inputs": [
-            {
-                "indexed": true,
-                "internalType": "address",
                 "name": "owner",
                 "type": "address"
             },
@@ -210,25 +203,25 @@
         "inputs": [
             {
                 "indexed": false,
-                "internalType": "uint256",
-                "name": "_price",
-                "type": "uint256"
+                "internalType": "bytes32",
+                "name": "newRoot",
+                "type": "bytes32"
             }
         ],
-        "name": "ChangePrice",
+        "name": "ChangeMerkleRoot",
         "type": "event"
     },
     {
         "anonymous": false,
         "inputs": [
             {
-                "indexed": true,
-                "internalType": "address",
-                "name": "user",
-                "type": "address"
+                "indexed": false,
+                "internalType": "uint256",
+                "name": "_price",
+                "type": "uint256"
             }
         ],
-        "name": "DeletedFromWhitelist",
+        "name": "ChangePrice",
         "type": "event"
     },
     {
@@ -324,19 +317,6 @@
         "inputs": [
             {
                 "internalType": "address",
-                "name": "user",
-                "type": "address"
-            }
-        ],
-        "name": "addToWhitelist",
-        "outputs": [],
-        "stateMutability": "nonpayable",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "address",
                 "name": "to",
                 "type": "address"
             },
@@ -381,19 +361,6 @@
             }
         ],
         "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "address",
-                "name": "user",
-                "type": "address"
-            }
-        ],
-        "name": "deleteFromWhitelist",
-        "outputs": [],
-        "stateMutability": "nonpayable",
         "type": "function"
     },
     {
@@ -468,11 +435,29 @@
         "type": "function"
     },
     {
+        "inputs": [],
+        "name": "merkleRoot",
+        "outputs": [
+            {
+                "internalType": "bytes32",
+                "name": "",
+                "type": "bytes32"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
         "inputs": [
             {
                 "internalType": "uint8",
                 "name": "amount",
                 "type": "uint8"
+            },
+            {
+                "internalType": "bytes32[]",
+                "name": "merkleProof",
+                "type": "bytes32[]"
             }
         ],
         "name": "mint",
@@ -649,6 +634,19 @@
     {
         "inputs": [
             {
+                "internalType": "bytes32",
+                "name": "_merkleRoot",
+                "type": "bytes32"
+            }
+        ],
+        "name": "setMerkleRoot",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
                 "internalType": "uint8",
                 "name": "_MAX_PER_WALLET",
                 "type": "uint8"
@@ -757,25 +755,6 @@
         "name": "transferOwnership",
         "outputs": [],
         "stateMutability": "nonpayable",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "address",
-                "name": "",
-                "type": "address"
-            }
-        ],
-        "name": "whitelist",
-        "outputs": [
-            {
-                "internalType": "bool",
-                "name": "",
-                "type": "bool"
-            }
-        ],
-        "stateMutability": "view",
         "type": "function"
     },
     {

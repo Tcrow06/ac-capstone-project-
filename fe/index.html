@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>NFT Whitelist Sale</title>
+    <link rel="stylesheet" href="styles.css" />
+    <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
+  </head>
+  <body>
+    <div class="container">
+      <!-- Top Section -->
+      <div class="top-bar">
+        <div id="walletAddress">Wallet: Not Connected</div>
+        <button id="connectBtn">🔌 Connect Wallet</button>
+        <a
+          id="viewContractBtn"
+          href="https://sepolia.etherscan.io/address/0x67426256B28c89349ab25e886876Fe5A24c21976"
+          target="_blank"
+          >🔍 View Contract</a
+        >
+      </div>
+
+      <h1>🧬 NFT Whitelist Mint</h1>
+
+      <!-- Admin -->
+      <div class="card admin-section">
+        <h2>👑 Admin Panel</h2>
+        <input
+          type="text"
+          id="whitelistAddress"
+          placeholder="Address to whitelist"
+        />
+        <div class="btn-group">
+          <button id="addWhitelistBtn" type="button">Add</button>
+          <button id="removeWhitelistBtn" type="button">Remove</button>
+        </div>
+
+        <input type="number" id="priceInput" placeholder="Price (ETH)" />
+        <button id="setPriceBtn">Set Price</button>
+
+        <input
+          type="number"
+          id="maxPerWalletInput"
+          placeholder="Max per wallet"
+        />
+        <button id="setMaxBtn">Set Max</button>
+
+        <button id="withdrawBtn" class="danger">Withdraw</button>
+      </div>
+
+      <!-- Mint -->
+      <div class="card user-section">
+        <h2>🎯 Mint NFT</h2>
+        <input type="number" id="mintAmount" placeholder="Amount to mint" />
+        <button id="mintBtn">🖼️ Mint</button>
+      </div>
+
+      <!-- Minted List -->
+      <div class="card token-list">
+        <h2>📋 Minted NFT List</h2>
+        <button id="loadMintedBtn">🔄 Load Minted Tokens</button>
+        <div id="mintedList" class="minted-grid"></div>
+      </div>
+    </div>
+
+    <!-- Toast -->
+    <div id="toast" class="toast"></div>
+
+    <script src="abi.js"></script>
+    <script src="script.js"></script>
+  </body>
+</html>
