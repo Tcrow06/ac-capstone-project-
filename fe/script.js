@@ -284,6 +284,10 @@ window.addEventListener("load", async () => {
       localStorage.removeItem("connectedWallet"); // nếu thất bại thì xóa cache
     }
   }
+  if (typeof AddressWhitelist !== "undefined") {
+    const etherscanLink = `https://sepolia.etherscan.io/address/${AddressWhitelist}`;
+    document.getElementById("viewContractBtn").href = etherscanLink;
+  }
 });
 
 function showAddress(add) {
