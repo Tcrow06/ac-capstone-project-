@@ -1,4 +1,4 @@
-const AddressWhitelist = "0x5b01BbB9ef533F6Eab95E1C55A558E0c9915e9C9"
+const AddressWhitelist = "0xe2e02535Ad0e63322CDE51B9694f036D8cA04DA1"
 const ABIWhitelist =  [
     {
       "inputs": [

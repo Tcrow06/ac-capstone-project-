@@ -5,8 +5,10 @@ Một DApp NFT whitelist mint đơn giản được xây dựng bằng Solidity 
 ---
 
 ## 🔗 Contract Verified on Sepolia
-
-✅ [0x72057eB7C754c8bdF166aA626cc504CF8C81d809](https://sepolia.etherscan.io/address/0x72057eB7C754c8bdF166aA626cc504CF8C81d809#code)
+- NFTCollection
+✅ [0xd1CD8ff209EFE36e7adE30de41a2C0E65A19569E](https://sepolia.etherscan.io/address/0xd1CD8ff209EFE36e7adE30de41a2C0E65A19569E#code)
+- WhitelistMinter
+✅ [0xe2e02535Ad0e63322CDE51B9694f036D8cA04DA1](https://sepolia.etherscan.io/address/0xe2e02535Ad0e63322CDE51B9694f036D8cA04DA1#code)
 
 ---
 

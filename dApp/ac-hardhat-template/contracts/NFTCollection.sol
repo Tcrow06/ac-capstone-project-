@@ -5,7 +5,7 @@ import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
 
-contract NFTCollection is ERC721 {
+contract NFTCollection is ERC721{
     using Strings for uint256;
 
     string private baseTokenURI="https://687f2992efe65e520088915c.mockapi.io/metadata/";

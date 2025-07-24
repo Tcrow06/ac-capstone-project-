@@ -1,4 +1,4 @@
-const AddressNft = "0x9981e9e77571D82ed66b876966e74BbBF9CbCDA8"
+const AddressNft = "0xd1CD8ff209EFE36e7adE30de41a2C0E65A19569E"
 const ABINft = [
     {
       "inputs": [],
