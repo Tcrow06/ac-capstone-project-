@@ -1,4 +1,4 @@
-let provider, signer, contract;
+let provider, signer, nftCollection, whitelistMinter;
 
 const walletDisplay = document.getElementById("walletAddress");
 
@@ -7,24 +7,55 @@ function showToast(message, duration = 3000) {
   toast.textContent = message;
   toast.style.display = "block";
 
-  setTimeout(() => {
-    toast.style.display = "none";
-  }, duration);
+  if (toast._timeoutId) {
+    clearTimeout(toast._timeoutId);
+    toast._timeoutId = null;
+  }
+
+  if (duration !== false) {
+    toast._timeoutId = setTimeout(() => {
+      toast.style.display = "none";
+    }, duration);
+  }
+}
+
+function hideToast() {
+  const toast = document.getElementById("toast");
+  toast.style.display = "none";
+  if (toast._timeoutId) {
+    clearTimeout(toast._timeoutId);
+    toast._timeoutId = null;
+  }
 }
 
 document.getElementById("connectBtn").onclick = async () => {
-  if (typeof window.ethereum !== "undefined") {
+  if (typeof window.ethereum === "undefined") {
+    showToast("❌ MetaMask không được cài đặt", 3000);
+    return;
+  }
+  showToast("⏳ Đang kết nối ví...", false);
+
+  try {
     await ethereum.request({ method: "eth_requestAccounts" });
     provider = new ethers.providers.Web3Provider(window.ethereum);
     signer = provider.getSigner();
     const address = await signer.getAddress();
-    walletDisplay.textContent = "Wallet: " + address;
+    walletDisplay.textContent = "Wallet: " + showAddress(address);
 
-    contract = new ethers.Contract(contractAddress, contractABI, signer);
+    // contract = new ethers.Contract(contractAddress, contractABI, signer);
+
+    whitelistMinter = new ethers.Contract(AddressWhitelist, ABIWhitelist, signer);
+    nftCollection = new ethers.Contract(AddressNft, ABINft, signer);
     localStorage.setItem("connectedWallet", address);
-    showToast("✅ Connected!");
-  } else {
-    showToast("❌ MetaMask not installed", false);
+    showToast("	✅ Đã kết nối thành công!");
+  } catch (err) {
+    console.error("❌ Kết nối ví thất bại:", err);
+    hideToast();
+    if (err.code === 4001) {
+      showToast("❌ Bạn đã từ chối kết nối MetaMask", 3000);
+    } else {
+      showToast("❌ Lỗi kết nối ví: " + getReadableError(err), 3000);
+    }
   }
 };
 
@@ -34,22 +65,46 @@ document.getElementById("mintBtn").onclick = async () => {
   const userAddress = await signer.getAddress();
 
   try {
+    showToast("⏳ Đang kiểm tra whitelist...", false);
     const res = await fetch(`http://localhost:3000/api/proof/${userAddress}`);
-    // const res = await fetch(`https://server-nft-myci.vercel.app/api/proof/${userAddress}`);
+    if (!res.ok) {
+      // Lỗi HTTP như 404, 500
+      showToast("❌ Địa chỉ của bạn không nằm trong whitelist", 3000);
+      return;
+    }
+
     const data = await res.json();
     const leafProof = data.proof;
     if (!leafProof) {
-      showToast("❌ Your address is not whitelisted", false);
+      showToast("❌ Địa chỉ của bạn không nằm trong whitelist", 3000);
       return;
     }
-    const price = await contract.price();
+    const price = await whitelistMinter.price();
     const totalCost = price.mul(amount);
     console.log("Calling mint with", amount, leafProof, price.toString());
-    const tx = await contract.mint(amount, leafProof, { value: totalCost });
-    await tx.wait();
-    showToast(`✅ Minted ${amount} NFTs`);
+
+    // const tx = await whitelistMinter.mint(amount, leafProof, { value: totalCost });
+    // await tx.wait();
+    try {
+      showToast("⏳ Đang gửi giao dịch mint...", false);
+      const tx = await whitelistMinter.mint(amount, leafProof, {
+        value: totalCost
+      });
+      showToast("⏳ Giao dịch đang xử lý...",false);
+      await tx.wait();
+      showToast("✅ Đã mint thành công!");
+    } catch (err) {
+      console.error("❌ Giao dịch thất bại:", err);
+      const readable = getReadableError(err);
+      showToast("❌ " + readable, 3000);
+    }
+
+    // console.log("Tx created", tx);
+    // await tx.wait();
+    // showToast(`✅ Minted ${amount} NFTs`);
   } catch (err) {
-    showToast("❌ " + getReadableError(err), false);
+    console.error("TX error", err);
+    showToast("❌ " + getReadableError(err), 3000);
   }
 };
 
@@ -57,12 +112,13 @@ document.getElementById("addWhitelistBtn").onclick = async () => {
   const address = document.getElementById("whitelistAddress").value;
 
   const currentAddress = await signer.getAddress();
-  const ownerAddress = await contract.owner();
+  const ownerAddress = await whitelistMinter.owner();
   if (currentAddress.toLowerCase() !== ownerAddress.toLowerCase()) {
-      showToast("❌ You are not the contract owner", false);
+      showToast("❌ Bạn không phải là contract owner", 3000);
       return;
     }
   try {
+    showToast("⏳ Đang lấy MerkleRoot mới...", false);
     const res = await fetch('http://localhost:3000/api/whitelist/add', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -71,9 +127,10 @@ document.getElementById("addWhitelistBtn").onclick = async () => {
     const data = await res.json();
     if (!res.ok) throw new Error(data.error);
 
-    const tx = await contract.setMerkleRoot(data.merkleRoot);
+    showToast(`⏳ Đang thêm ${showAddress(address)} và cập nhật Merkle Root`, false);
+    const tx = await whitelistMinter.setMerkleRoot(data.merkleRoot);
     await tx.wait();
-    showToast(`✅Đã thêm ${address} và cập nhật Merkle Root`);
+    showToast(`✅Đã thêm ${showAddress(address)} và cập nhật Merkle Root`);
   } catch (err) {
     showToast("❌ " + err.message);
   }
@@ -81,13 +138,14 @@ document.getElementById("addWhitelistBtn").onclick = async () => {
 document.getElementById("removeWhitelistBtn").onclick = async () => {
 
   const currentAddress = await signer.getAddress();
-  const ownerAddress = await contract.owner();
+  const ownerAddress = await whitelistMinter.owner();
   if (currentAddress.toLowerCase() !== ownerAddress.toLowerCase()) {
-      showToast("❌ You are not the contract owner", false);
+      showToast("❌ Bạn không phải contract owner", 3000);
       return;
     }
   const address = document.getElementById("whitelistAddress").value;
   try {
+    showToast("⏳ Đang lấy MerkleRoot mới...", false);
     const res = await fetch('http://localhost:3000/api/whitelist/remove', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -97,9 +155,10 @@ document.getElementById("removeWhitelistBtn").onclick = async () => {
     if (!res.ok) throw new Error(data.error);
 
     // Gọi contract để set merkle root
-    const tx = await contract.setMerkleRoot(data.merkleRoot);
+    showToast(`⏳ Đang xóa ${showAddress(address)} và cập nhật Merkle Root...`, false);
+    const tx = await whitelistMinter.setMerkleRoot(data.merkleRoot);
     await tx.wait();
-    showToast(`✅Đã thêm ${address} và cập nhật Merkle Root`);
+    showToast(`✅Đã xóa ${showAddress(address)} và cập nhật Merkle Root`);
   } catch (err) {
     showToast("❌ " + err.message);
   }
@@ -110,32 +169,35 @@ document.getElementById("setPriceBtn").onclick = async () => {
   if (!eth) return;
   try {
     const wei = ethers.utils.parseEther(eth.toFixed(18).toString());
-    const tx = await contract.setterPrice(wei);
+    showToast(`⏳ Đang đổi giá ${eth} ETH`, false);
+    const tx = await whitelistMinter.setPrice(wei);
     await tx.wait();
-    showToast(`✅ Set price to ${eth} ETH`);
+    showToast(`✅ Đã đổi giá thành công: ${eth} ETH`);
   } catch (err) {
-    showToast("❌ " + getReadableError(err), false);
+    showToast("❌ " + getReadableError(err), 3000);
   }
 };
 
 document.getElementById("setMaxBtn").onclick = async () => {
   const max = parseInt(document.getElementById("maxPerWalletInput").value);
   try {
-    const tx = await contract.setterMaxPerWallet(max);
+    showToast(`⏳ Đang đổi số token tối đa / ví...`, false);
+    const tx = await whitelistMinter.setMaxPerWallet(max);
     await tx.wait();
-    showToast(`✅ Set max per wallet to ${max}`);
+    showToast(`✅ Đã đổi số lượng tối đa mỗi ví: ${max}`);
   } catch (err) {
-    showToast("❌ " + getReadableError(err), false);
+    showToast("❌ " + getReadableError(err), 3000);
   }
 };
 
 document.getElementById("withdrawBtn").onclick = async () => {
   try {
-    const tx = await contract.withdraw();
+    showToast(`⏳ Đang rút tiền về ví...`, false);
+    const tx = await whitelistMinter.withdraw();
     await tx.wait();
-    showToast("✅ Withdraw successful!");
+    showToast("✅ Đã rút tiền thành công!");
   } catch (err) {
-    showToast("❌ " + getReadableError(err), false);
+    showToast("❌ " + getReadableError(err), 3000);
   }
 };
 
@@ -144,11 +206,11 @@ document.getElementById("loadMintedBtn").onclick = async () => {
   listDiv.innerHTML = "⏳ Loading...";
 
   try {
-    const [_, ids, owners, uris] = await contract.getAllMintedTokens();
+    const [_, ids, owners, uris] = await nftCollection.getAllMintedTokens();
     listDiv.innerHTML = "";
 
     if (ids.length === 0) {
-      listDiv.innerHTML = "⚠️ No NFTs minted yet.";
+      listDiv.innerHTML = "⚠️ Chưa có NFT nào được mint.";
       return;
     }
 
@@ -179,7 +241,7 @@ document.getElementById("loadMintedBtn").onclick = async () => {
           <p class="nft-desc">${meta.description}</p>
           <small><strong>Owner:</strong> ${shortOwner}</small>
           <p>
-              <a href="https://sepolia.etherscan.io/token/${contractAddress}?a=${ids[i]}" 
+              <a href="https://sepolia.etherscan.io/token/${AddressNft}?a=${ids[i]}" 
                 target="_blank" 
                 class="tx-link">View on Etherscan</a>
           </p>
@@ -189,15 +251,18 @@ document.getElementById("loadMintedBtn").onclick = async () => {
       listDiv.appendChild(card);
     }
   } catch (err) {
-    listDiv.innerHTML = "❌ Failed to load tokens: " + getReadableError(err);
+    listDiv.innerHTML = "❌ Tải danh sách NFT thất bại: " + getReadableError(err);
   }
 };
 
 
 function getReadableError(err) {
+  console.log(err);
+  const message = err?.error?.message || err?.message || "";;
+  if (message.includes("user rejected")) return "Bạn đã từ chối giao dịch";
   if (err?.error?.message) return err.error.message;
-  if (err?.data?.message) return err.data.message;
-  return err.message || "Unknown error";
+  if (err?.message) return err.message;
+  if (error?.revert?.message) return error.revert.message;
 }
 
 window.addEventListener("load", async () => {
@@ -209,12 +274,18 @@ window.addEventListener("load", async () => {
       const address = await signer.getAddress();
 
       if (address.toLowerCase() === savedAddress.toLowerCase()) {
-        contract = new ethers.Contract(contractAddress, contractABI, signer);
-        walletDisplay.textContent = "Wallet: " + address;
-        // showToast("✅ Auto-connected to wallet");
+        // contract = new ethers.Contract(contractAddress, contractABI, signer);
+        whitelistMinter = new ethers.Contract(AddressWhitelist, ABIWhitelist, signer);
+        nftCollection = new ethers.Contract(AddressNft, ABINft, signer);
+        walletDisplay.textContent = "Wallet: " +  showAddress(address);
+        showToast("✅ Đã tự động kết nối ví", 2000);
       }
     } catch (e) {
       localStorage.removeItem("connectedWallet"); // nếu thất bại thì xóa cache
     }
   }
 });
+
+function showAddress(add) {
+  return add ? add.slice(0, 6) + "..." + add.slice(-4) : "";
+}

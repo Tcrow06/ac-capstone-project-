@@ -22,10 +22,9 @@ Một DApp NFT whitelist mint đơn giản được xây dựng bằng Solidity 
 ## ⚙️ Tính năng chính
 
 ### 👑 Admin (Owner)
-- `addToWhitelist(address)`: Thêm người dùng vào whitelist.
-- `deleteFromWhitelist(address)`: Xóa người dùng khỏi whitelist.
-- `setterPrice(uint)`: Thay đổi giá mint.
-- `setterMaxPerWallet(uint8)`: Cập nhật giới hạn số lượng mint mỗi ví.
+- `setMerkleRoot(bytes32)`: Thêm/xóa người dùng vào whitelist.
+- `setPrice(uint)`: Thay đổi giá mint.
+- `setMaxPerWallet(uint8)`: Cập nhật giới hạn số lượng mint mỗi ví.
 - `withdraw()`: Rút toàn bộ ETH từ hợp đồng về ví owner.
 
 ### 🧑‍🎨 Người dùng (Whitelisted User)
@@ -82,7 +81,7 @@ http://127.0.0.1:5500/fe/index.html
 
 ### 7.Run the Server
 
-Khởi chạy server dùng cho chức năng cật nhật lại MerkleTree
+Khởi chạy server dùng cho chức năng cật nhập lại MerkleTree
 
 ```bash
 cd server
